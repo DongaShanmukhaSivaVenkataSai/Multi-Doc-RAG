@@ -1,0 +1,177 @@
+[
+  {
+    "id": 1,
+    "question": "What is the primary rule regarding code written by AI tools at AINOVIQ?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["you own what ships", "accountable", "correctness"],
+    "ground_truth": "The rule is that the engineer owns what ships, regardless of what wrote it. If an AI tool produces a function, the engineer is accountable for its correctness, edge cases, performance, and security."
+  },
+  {
+    "id": 2,
+    "question": "What are the eligibility criteria for the BNG Software Engineer campus hiring batch?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["2027", "75%", "7.89", "backlogs", "gurugram"],
+    "ground_truth": "Graduating batch of 2027, minimum 75% or 7.89 CGPA in graduation, Class XII and Class X, no active backlogs, willing to work from Gurugram office."
+  },
+  {
+    "id": 3,
+    "question": "What does Month 1 look like for an AI Augmented Engineer at AINOVIQ?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["learn", "onboarding", "fortnight", "trace"],
+    "ground_truth": "Month 1 is the 'Learn' phase: structured onboarding on the codebase, platform, and AI tooling standards; shipping something small to production in the first fortnight; learning to trace a live call end to end."
+  },
+  {
+    "id": 4,
+    "question": "What are the four phases of the first year roadmap for an AI Augmented Engineer?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["learn", "build", "own", "extend"],
+    "ground_truth": "Month 1: Learn, Months 2–3: Build, Months 4–6: Own, and Months 7–12: Extend."
+  },
+  {
+    "id": 5,
+    "question": "What are the flagship products developed by blackNgreen?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["eva", "smartconnect", "nexiva", "magicvoice"],
+    "ground_truth": "EVA (AI voice and chat assistant), SmartConnect AI (IVR-led instant loan and digital services), Nexiva (AI customer care), MagicVoice, CRBT, and Mobibattle."
+  },
+  {
+    "id": 6,
+    "question": "How many openings are available for the BNG Software Engineer role?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["10 to 15", "openings"],
+    "ground_truth": "There are 10 to 15 openings for the Software Engineer role."
+  },
+  {
+    "id": 7,
+    "question": "What scale does blackNgreen operate at in terms of operators and countries?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["180+", "80+", "1 bn+", "operators"],
+    "ground_truth": "blackNgreen operates across 180+ telecom operators in 80+ countries with over 1 billion active users."
+  },
+  {
+    "id": 8,
+    "question": "What behavioral attribute describes an engineer who assumes generated code is wrong until checked?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["healthy scepticism of ai output", "assumes generated code is wrong"],
+    "ground_truth": "Healthy scepticism of AI output: assumes generated code is wrong until checked and can describe a time a tool confidently misled them."
+  },
+  {
+    "id": 9,
+    "question": "What degree qualifications are eligible for the AINOVIQ AI Augmented Engineer role?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["computer science", "information technology", "artificial intelligence", "data science"],
+    "ground_truth": "B.Tech / B.E. in Computer Science, Computer Engineering, Information Technology, Artificial Intelligence, AI & ML, or Data Science."
+  },
+  {
+    "id": 10,
+    "question": "What technologies and databases are part of the BNG software engineering stack?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["java", "python", "spring boot", "postgresql", "kafka", "redis"],
+    "ground_truth": "Java, Python, Node.js, Spring Boot, React, PostgreSQL/MySQL, MongoDB, Redis, Kafka, Docker, Kubernetes, AWS, GCP, and telecom protocols like SIP, SMPP, and Diameter."
+  },
+  {
+    "id": 11,
+    "question": "What email address should candidates use for campus recruitment queries at BNG?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["recruitment@blackngreen.com", "anu.singh@blackngreen.com"],
+    "ground_truth": "recruitment@blackngreen.com and anu.singh@blackngreen.com."
+  },
+  {
+    "id": 12,
+    "question": "What is the single most useful thing a candidate can show AINOVIQ according to the JD?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["side projects", "github", "nobody is grading it"],
+    "ground_truth": "Side projects, GitHub contributions, open-source pull requests, or a hackathon record that shows what you build when nobody is grading it."
+  },
+  {
+    "id": 13,
+    "question": "What does the AINOVIQ JD say this role is NOT?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["not a prompt-only role", "not a research role", "not a narrow"],
+    "ground_truth": "It is not a prompt-only role, not a research role, and not a narrow single-ticket role."
+  },
+  {
+    "id": 14,
+    "question": "Where is the blackNgreen / AINOVIQ engineering office located?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["gurugram", "haryana"],
+    "ground_truth": "Gurugram, Haryana (on-site)."
+  },
+  {
+    "id": 15,
+    "question": "What are telecom operator partners of blackNgreen listed in the JD?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["mtn", "orange", "vodacom", "airtel", "ooredoo", "zain"],
+    "ground_truth": "Operators include MTN, Orange, Vodacom, Airtel, Ooredoo, Zain, and Telkomsel across Africa, Asia, MENA, and Latin America."
+  },
+  {
+    "id": 16,
+    "question": "What responsibilities does an AI Augmented Engineer have regarding problem solving and system thinking?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["root cause", "scalability", "latency budgets"],
+    "ground_truth": "Analyse complex telecom/digital problems, design solutions considering latency budgets and failure behavior, break problems into clear components, and debug to root cause."
+  },
+  {
+    "id": 17,
+    "question": "What does an engineer do in Months 4 to 6 ('Own') at AINOVIQ?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["months 4–6", "own", "design note", "production"],
+    "ground_truth": "Take a feature from product conversation to production largely on their own, including tests and instrumentation, write their first design note, build a demo, and present it."
+  },
+  {
+    "id": 18,
+    "question": "What are the core behavioral attributes evaluated for candidates at AINOVIQ?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["curiosity", "creative problem solving", "ownership", "structured thinking"],
+    "ground_truth": "Curiosity, Creative problem solving, Ownership and self-starting, Product passion, Healthy scepticism of AI output, Willingness to share, and Structured thinking."
+  },
+  {
+    "id": 19,
+    "question": "What AI development tools are explicitly mentioned in the AINOVIQ job description?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["cursor", "github copilot", "agents"],
+    "ground_truth": "Cursor, coding companions, GitHub Copilot, LLM-based agents, and automation platforms."
+  },
+  {
+    "id": 20,
+    "question": "How quickly does blackNgreen deploy platforms for telecom operators?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["zero capital expenditure", "weeks", "not quarters"],
+    "ground_truth": "Deployed with zero capital expenditure on the operator side and live in weeks, not quarters."
+  },
+  {
+    "id": 21,
+    "question": "What are the voice and latency challenges mentioned under 'Why AINOVIQ'?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["sub-second voice latency", "multi-model fallback", "telecom volume"],
+    "ground_truth": "Sub-second voice latency, multi-model fallback, self-testing agents, and outbound campaigns at telecom volume."
+  },
+  {
+    "id": 22,
+    "question": "What is the expected shipping timeline for a campus engineer at BNG?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["first quarter", "first few months", "production code"],
+    "ground_truth": "A campus engineer at BNG ships production code in their first quarter to live operator environments."
+  },
+  {
+    "id": 23,
+    "question": "What telecom protocols will a Software Engineer work with at BNG?",
+    "doc_name": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+    "expected_keywords": ["sip", "smpp", "diameter", "ivr"],
+    "ground_truth": "SIP, SMPP, Diameter, and IVR platforms."
+  },
+  {
+    "id": 24,
+    "question": "What should an engineer do during Months 7 to 12 ('Extend') at AINOVIQ?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["extend", "own a component", "production issue", "new ai tool"],
+    "ground_truth": "Own a component of the platform, be trusted to investigate production issues, and bring a new AI tool or technique to the team."
+  },
+  {
+    "id": 25,
+    "question": "How do both blackNgreen and AINOVIQ view access to leadership and founders?",
+    "doc_name": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+    "expected_keywords": ["founders", "flat structure", "technical manager"],
+    "ground_truth": "Both emphasize flat structures with direct access to senior engineers, the CTO, Technical Manager, and founders."
+  }
+]

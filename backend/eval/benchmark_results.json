@@ -1,0 +1,241 @@
+{
+  "timestamp": "2026-10-03 17:24:53",
+  "total_queries": 25,
+  "metrics": {
+    "hit_rate_at_1": 0.8,
+    "hit_rate_at_3": 0.92,
+    "hit_rate_at_5": 0.96,
+    "mrr": 0.8633,
+    "p50_latency_ms": 2721.88,
+    "p95_latency_ms": 16104.18,
+    "avg_sparse_ms": 5.26,
+    "latency_reduction_percent": 34.7
+  },
+  "query_results": [
+    {
+      "id": 1,
+      "question": "What is the primary rule regarding code written by AI tools at AINOVIQ?",
+      "latency_ms": 21263.39,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.846
+    },
+    {
+      "id": 2,
+      "question": "What are the eligibility criteria for the BNG Software Engineer campus hiring batch?",
+      "latency_ms": 4066.01,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9939
+    },
+    {
+      "id": 3,
+      "question": "What does Month 1 look like for an AI Augmented Engineer at AINOVIQ?",
+      "latency_ms": 2816.36,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9031
+    },
+    {
+      "id": 4,
+      "question": "What are the four phases of the first year roadmap for an AI Augmented Engineer?",
+      "latency_ms": 2683.63,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.1165
+    },
+    {
+      "id": 5,
+      "question": "What are the flagship products developed by blackNgreen?",
+      "latency_ms": 2698.92,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.7351
+    },
+    {
+      "id": 6,
+      "question": "How many openings are available for the BNG Software Engineer role?",
+      "latency_ms": 2803.55,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9915
+    },
+    {
+      "id": 7,
+      "question": "What scale does blackNgreen operate at in terms of operators and countries?",
+      "latency_ms": 2791.88,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9742
+    },
+    {
+      "id": 8,
+      "question": "What behavioral attribute describes an engineer who assumes generated code is wrong until checked?",
+      "latency_ms": 2639.54,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.962
+    },
+    {
+      "id": 9,
+      "question": "What degree qualifications are eligible for the AINOVIQ AI Augmented Engineer role?",
+      "latency_ms": 2607.27,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9315
+    },
+    {
+      "id": 10,
+      "question": "What technologies and databases are part of the BNG software engineering stack?",
+      "latency_ms": 2604.97,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9877
+    },
+    {
+      "id": 11,
+      "question": "What email address should candidates use for campus recruitment queries at BNG?",
+      "latency_ms": 2980.26,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9975
+    },
+    {
+      "id": 12,
+      "question": "What is the single most useful thing a candidate can show AINOVIQ according to the JD?",
+      "latency_ms": 2731.17,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.2972
+    },
+    {
+      "id": 13,
+      "question": "What does the AINOVIQ JD say this role is NOT?",
+      "latency_ms": 2688.31,
+      "hit_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.4792
+    },
+    {
+      "id": 14,
+      "question": "Where is the blackNgreen / AINOVIQ engineering office located?",
+      "latency_ms": 2549.38,
+      "hit_rank": 4,
+      "reciprocal_rank": 0.25,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9611
+    },
+    {
+      "id": 15,
+      "question": "What are telecom operator partners of blackNgreen listed in the JD?",
+      "latency_ms": 2721.88,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.6323
+    },
+    {
+      "id": 16,
+      "question": "What responsibilities does an AI Augmented Engineer have regarding problem solving and system thinking?",
+      "latency_ms": 2529.79,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9968
+    },
+    {
+      "id": 17,
+      "question": "What does an engineer do in Months 4 to 6 ('Own') at AINOVIQ?",
+      "latency_ms": 2765.86,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9679
+    },
+    {
+      "id": 18,
+      "question": "What are the core behavioral attributes evaluated for candidates at AINOVIQ?",
+      "latency_ms": 2770.88,
+      "hit_rank": null,
+      "reciprocal_rank": 0.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9196
+    },
+    {
+      "id": 19,
+      "question": "What AI development tools are explicitly mentioned in the AINOVIQ job description?",
+      "latency_ms": 2728.87,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9758
+    },
+    {
+      "id": 20,
+      "question": "How quickly does blackNgreen deploy platforms for telecom operators?",
+      "latency_ms": 2495.43,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9653
+    },
+    {
+      "id": 21,
+      "question": "What are the voice and latency challenges mentioned under 'Why AINOVIQ'?",
+      "latency_ms": 2685.6,
+      "hit_rank": 2,
+      "reciprocal_rank": 0.5,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.2656
+    },
+    {
+      "id": 22,
+      "question": "What is the expected shipping timeline for a campus engineer at BNG?",
+      "latency_ms": 2689.71,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9388
+    },
+    {
+      "id": 23,
+      "question": "What telecom protocols will a Software Engineer work with at BNG?",
+      "latency_ms": 2635.09,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "BNG_JD_Software_Engineer_Campus_2027.docx.pdf",
+      "top_score": 0.9943
+    },
+    {
+      "id": 24,
+      "question": "What should an engineer do during Months 7 to 12 ('Extend') at AINOVIQ?",
+      "latency_ms": 2723.39,
+      "hit_rank": 1,
+      "reciprocal_rank": 1.0,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.9396
+    },
+    {
+      "id": 25,
+      "question": "How do both blackNgreen and AINOVIQ view access to leadership and founders?",
+      "latency_ms": 2976.01,
+      "hit_rank": 3,
+      "reciprocal_rank": 0.3333,
+      "top_source": "AINOVIQ_AI_Augmented_Engineer_JD_Campus.docx.pdf",
+      "top_score": 0.4148
+    }
+  ]
+}
