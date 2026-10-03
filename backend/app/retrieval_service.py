@@ -1,8 +1,10 @@
 """Hybrid retrieval: Dense (Pinecone) + Sparse (BM25) with Reciprocal Rank Fusion."""
 
+from typing import Optional, List
 import logging
 from rank_bm25 import BM25Okapi
-from app.pinecone_service import query_dense, get_all_chunks_text
+from app.pinecone_service import query_dense
+from app.sparse_store import query_sparse
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -80,32 +82,32 @@ def reciprocal_rank_fusion(
 
 def hybrid_retrieve(
     query: str,
+    doc_filter: Optional[str | list[str]] = None,
     dense_top_k: int | None = None,
     sparse_top_k: int | None = None,
     rrf_k: int | None = None,
 ) -> list[dict]:
     """
     Perform hybrid retrieval combining dense and sparse search with RRF.
+    Supports filtering to specific documents via doc_filter.
 
     Pipeline:
     1. Dense retrieval via Pinecone (semantic similarity)
-    2. Sparse retrieval via BM25 (keyword matching)
+    2. High-speed sparse retrieval via local SQLite BM25
     3. Reciprocal Rank Fusion to merge both ranked lists
     """
     dense_top_k = dense_top_k or settings.dense_top_k
     sparse_top_k = sparse_top_k or settings.sparse_top_k
     rrf_k = rrf_k or settings.rrf_k
 
-    logger.info(f"Hybrid retrieval for: '{query[:100]}...'")
+    logger.info(f"Hybrid retrieval for: '{query[:100]}...' (filter={doc_filter})")
 
     # 1. Dense retrieval from Pinecone
-    dense_results = query_dense(query, top_k=dense_top_k)
+    dense_results = query_dense(query, top_k=dense_top_k, doc_filter=doc_filter)
     logger.info(f"Dense retrieval returned {len(dense_results)} results")
 
-    # 2. Sparse retrieval via BM25
-    # Fetch all chunks for BM25 scoring
-    all_chunks = get_all_chunks_text()
-    sparse_results = bm25_retrieval(query, all_chunks, top_k=sparse_top_k)
+    # 2. Sparse retrieval via local SQLite BM25
+    sparse_results = query_sparse(query, top_k=sparse_top_k, doc_filter=doc_filter)
     logger.info(f"Sparse (BM25) retrieval returned {len(sparse_results)} results")
 
     # 3. RRF Fusion

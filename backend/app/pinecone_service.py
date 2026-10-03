@@ -77,10 +77,11 @@ def upsert_chunks(
 def query_dense(
     query: str,
     top_k: int = 20,
-    doc_filter: Optional[str] = None,
+    doc_filter: Optional[str | list[str]] = None,
 ) -> list[dict]:
     """
     Dense retrieval: query Pinecone with embedding similarity.
+    Supports filtering by single doc_name or list of doc_names.
     Returns list of {id, text, doc_name, page, chunk_index, score}.
     """
     index = get_pinecone_index()
@@ -89,7 +90,13 @@ def query_dense(
     # Build filter
     filter_dict = {}
     if doc_filter:
-        filter_dict["doc_name"] = {"$eq": doc_filter}
+        if isinstance(doc_filter, str):
+            filter_dict["doc_name"] = {"$eq": doc_filter}
+        elif isinstance(doc_filter, list) and len(doc_filter) > 0:
+            if len(doc_filter) == 1:
+                filter_dict["doc_name"] = {"$eq": doc_filter[0]}
+            else:
+                filter_dict["doc_name"] = {"$in": doc_filter}
 
     results = index.query(
         vector=query_embedding,
@@ -135,42 +142,17 @@ def delete_document(doc_name: str) -> bool:
         return False
 
 
-def get_all_chunks_text(doc_filter: Optional[str] = None) -> list[dict]:
+def get_all_chunks_text(doc_filter: Optional[str | list[str]] = None) -> list[dict]:
     """
-    Fetch all chunk texts from Pinecone for BM25 sparse retrieval.
-    Returns list of {id, text, doc_name, page, chunk_index}.
+    Fetch chunk texts from local sparse database.
+    Eliminates high-latency Pinecone HTTP fetches and rate-limiting issues.
     """
-    index = get_pinecone_index()
-
-    all_chunks = []
     try:
-        # List all vector IDs
-        prefix = f"{doc_filter}_" if doc_filter else None
-        all_ids = []
-        for id_batch in index.list(prefix=prefix):
-            all_ids.extend(id_batch)
-
-        if not all_ids:
-            return []
-
-        # Fetch vectors in batches to get metadata
-        batch_size = 100
-        for i in range(0, len(all_ids), batch_size):
-            batch_ids = all_ids[i : i + batch_size]
-            fetch_result = index.fetch(ids=batch_ids)
-            for vec_id, vec_data in fetch_result.get("vectors", {}).items():
-                metadata = vec_data.get("metadata", {})
-                all_chunks.append({
-                    "id": vec_id,
-                    "text": metadata.get("text", ""),
-                    "doc_name": metadata.get("doc_name", ""),
-                    "page": metadata.get("page", 0),
-                    "chunk_index": metadata.get("chunk_index", 0),
-                })
+        from app.sparse_store import get_all_chunks
+        return get_all_chunks(doc_filter=doc_filter)
     except Exception as e:
-        logger.error(f"Error fetching chunks: {e}")
-
-    return all_chunks
+        logger.error(f"Error fetching chunks from sparse store: {e}")
+        return []
 
 
 def check_connection() -> bool:
