@@ -17,6 +17,7 @@ class QueryRequest(BaseModel):
     question: str
     chat_history: list[dict] = []
     top_k: int = 5
+    doc_ids: Optional[list[str]] = None
 
 
 class SourceChunk(BaseModel):

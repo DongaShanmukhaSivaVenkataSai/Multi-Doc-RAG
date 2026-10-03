@@ -15,6 +15,7 @@ import os
 import json
 import shutil
 import logging
+import asyncio
 from datetime import datetime
 from typing import Optional
 from contextlib import asynccontextmanager
@@ -34,9 +35,15 @@ from app.models import (
 )
 from app.document_processor import semantic_chunk_document, SUPPORTED_EXTENSIONS
 from app.pinecone_service import upsert_chunks, delete_document, check_connection as check_pinecone
+from app.sparse_store import upsert_sparse_chunks, delete_sparse_document, init_db as init_sparse_db
 from app.retrieval_service import hybrid_retrieve
 from app.reranker_service import rerank_chunks
-from app.llm_service import generate_streaming, check_connection as check_groq
+from app.llm_service import (
+    generate_streaming,
+    generate_streaming_async,
+    condense_query,
+    check_connection as check_groq,
+)
 
 # --- Logging ---
 logging.basicConfig(
@@ -73,6 +80,8 @@ async def lifespan(app: FastAPI):
     """Application startup and shutdown."""
     logger.info("🚀 Starting Fast-RAG Backend...")
     os.makedirs(settings.upload_dir, exist_ok=True)
+    init_sparse_db()
+    logger.info("✅ Local sparse database initialized")
 
     # Pre-load models (optional, for faster first query)
     logger.info("Pre-loading models...")
@@ -168,9 +177,9 @@ async def upload_document(file: UploadFile = File(...)):
         f.write(contents)
 
     try:
-        # Semantic chunking
+        # Semantic chunking (offloaded to threadpool)
         logger.info(f"📄 Processing: {file.filename}")
-        nodes = semantic_chunk_document(file_path, file.filename)
+        nodes = await asyncio.to_thread(semantic_chunk_document, file_path, file.filename)
 
         # Prepare chunks for upsert
         chunks = []
@@ -181,8 +190,9 @@ async def upload_document(file: UploadFile = File(...)):
                 "chunk_index": node.metadata.get("chunk_index", 0),
             })
 
-        # Upsert to Pinecone
-        num_upserted = upsert_chunks(chunks, file.filename)
+        # Upsert to Pinecone and local SQLite sparse store
+        num_upserted = await asyncio.to_thread(upsert_chunks, chunks, file.filename)
+        await asyncio.to_thread(upsert_sparse_chunks, chunks, file.filename)
 
         # Update registry
         docs_registry[file.filename] = {
@@ -192,7 +202,7 @@ async def upload_document(file: UploadFile = File(...)):
         }
         save_docs_registry(docs_registry)
 
-        logger.info(f"✅ Processed {file.filename}: {len(chunks)} chunks upserted")
+        logger.info(f"✅ Processed {file.filename}: {len(chunks)} chunks indexed")
 
         return UploadResponse(
             status="success",
@@ -224,8 +234,15 @@ async def query_documents(request: QueryRequest):
     logger.info(f"🔍 Query: {question[:100]}...")
 
     try:
-        # 1. Hybrid retrieval
-        hybrid_results = hybrid_retrieve(question)
+        # 1. Conversational Query Reformulation (if multi-turn)
+        search_query = await condense_query(question, request.chat_history)
+
+        # 2. Hybrid retrieval (offloaded to threadpool with document scoping)
+        hybrid_results = await asyncio.to_thread(
+            hybrid_retrieve,
+            search_query,
+            request.doc_ids,
+        )
 
         if not hybrid_results:
             async def empty_stream():
@@ -242,10 +259,15 @@ async def query_documents(request: QueryRequest):
                 media_type="text/event-stream",
             )
 
-        # 2. Rerank
-        reranked = rerank_chunks(question, hybrid_results, top_k=request.top_k)
+        # 3. Rerank (offloaded to threadpool)
+        reranked = await asyncio.to_thread(
+            rerank_chunks,
+            search_query,
+            hybrid_results,
+            top_k=request.top_k,
+        )
 
-        # 3. Stream response
+        # 4. Stream response asynchronously
         async def event_stream():
             # Send sources first
             sources = []
@@ -260,8 +282,8 @@ async def query_documents(request: QueryRequest):
 
             yield f"data: {json.dumps({'type': 'sources', 'sources': sources})}\n\n"
 
-            # Stream LLM response
-            for token in generate_streaming(
+            # Stream LLM response without blocking event loop
+            async for token in generate_streaming_async(
                 question, reranked, request.chat_history
             ):
                 yield f"data: {json.dumps({'type': 'token', 'content': token})}\n\n"
@@ -302,8 +324,9 @@ async def remove_document(doc_name: str):
     if doc_name not in docs_registry:
         raise HTTPException(status_code=404, detail=f"Document not found: {doc_name}")
 
-    # Delete from Pinecone
-    success = delete_document(doc_name)
+    # Delete from Pinecone and local SQLite sparse store
+    success = await asyncio.to_thread(delete_document, doc_name)
+    await asyncio.to_thread(delete_sparse_document, doc_name)
     if not success:
         raise HTTPException(status_code=500, detail="Failed to delete from vector store")
 
