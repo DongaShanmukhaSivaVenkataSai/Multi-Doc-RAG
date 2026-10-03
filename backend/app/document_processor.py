@@ -27,10 +27,35 @@ def parse_pdf(file_path: str) -> list[dict]:
     return pages
 
 
+def _format_docx_table(table) -> str:
+    """Convert a python-docx Table object to Markdown table syntax."""
+    rows = []
+    for row in table.rows:
+        cells = [cell.text.strip().replace("\n", " ") for cell in row.cells]
+        if any(cells):
+            rows.append("| " + " | ".join(cells) + " |")
+    if not rows:
+        return ""
+    if len(rows) > 1:
+        header = rows[0]
+        divider = "| " + " | ".join(["---"] * len(table.rows[0].cells)) + " |"
+        return "\n".join([header, divider] + rows[1:])
+    return "\n".join(rows)
+
+
 def parse_docx(file_path: str) -> list[dict]:
-    """Extract text from DOCX file."""
+    """Extract text and tables from DOCX file."""
     doc = DocxDocument(file_path)
-    full_text = "\n".join([para.text for para in doc.paragraphs if para.text.strip()])
+    content_blocks = []
+    for para in doc.paragraphs:
+        text = para.text.strip()
+        if text:
+            content_blocks.append(text)
+    for table in doc.tables:
+        table_md = _format_docx_table(table)
+        if table_md:
+            content_blocks.append(table_md)
+    full_text = "\n\n".join(content_blocks)
     if full_text:
         return [{"text": full_text, "page": 1}]
     return []
@@ -58,6 +83,40 @@ def parse_document(file_path: str) -> list[dict]:
         raise ValueError(f"Unsupported file type: {ext}")
 
 
+def _clamp_node_length(
+    nodes: list[TextNode], max_chars: int = 1800, overlap: int = 150
+) -> list[TextNode]:
+    """
+    Ensure no node exceeds max_chars (~450 tokens) to prevent silent truncation
+    in embedding (512 tokens) and cross-encoder reranking models.
+    """
+    clamped_nodes = []
+    for node in nodes:
+        text = node.get_content()
+        if len(text) <= max_chars:
+            clamped_nodes.append(node)
+            continue
+
+        start = 0
+        sub_idx = 0
+        while start < len(text):
+            end = min(start + max_chars, len(text))
+            if end < len(text):
+                # Try breaking at newline or sentence boundary
+                break_point = max(text.rfind("\n", start, end), text.rfind(". ", start, end))
+                if break_point > start + max_chars // 2:
+                    end = break_point + 1
+            chunk_text = text[start:end].strip()
+            if chunk_text:
+                new_meta = node.metadata.copy()
+                new_meta["sub_chunk"] = sub_idx
+                sub_node = TextNode(text=chunk_text, metadata=new_meta)
+                clamped_nodes.append(sub_node)
+                sub_idx += 1
+            start = end - overlap if end < len(text) else end
+    return clamped_nodes
+
+
 def semantic_chunk_document(
     file_path: str,
     doc_name: str,
@@ -68,7 +127,8 @@ def semantic_chunk_document(
     Parse a document and split it into semantically coherent chunks.
 
     Uses LlamaIndex SemanticSplitterNodeParser which groups sentences
-    by embedding similarity — creating chunks that preserve meaning.
+    by embedding similarity — creating chunks that preserve meaning,
+    followed by length clamping to prevent context window overflow.
     """
     logger.info(f"Processing document: {doc_name}")
 
@@ -95,6 +155,7 @@ def semantic_chunk_document(
     )
 
     nodes = splitter.get_nodes_from_documents(llama_docs)
+    nodes = _clamp_node_length(nodes, max_chars=1800, overlap=150)
 
     # Add chunk index metadata
     for idx, node in enumerate(nodes):

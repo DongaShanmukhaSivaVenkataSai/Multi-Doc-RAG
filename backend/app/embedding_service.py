@@ -24,18 +24,19 @@ def get_embed_model() -> HuggingFaceEmbedding:
     return _embed_model
 
 
-def embed_texts(texts: list[str]) -> list[list[float]]:
+def embed_texts(texts: list[str], batch_size: int = 32) -> list[list[float]]:
     """
-    Generate embeddings for a list of texts.
-    Returns raw float embeddings.
+    Generate embeddings for a list of texts using batch processing.
+    Returns float embeddings.
     """
+    if not texts:
+        return []
     model = get_embed_model()
     embeddings = []
-    # Process in batches for memory efficiency
-    batch_size = 32
+    # Process in batches with native batch inference
     for i in range(0, len(texts), batch_size):
         batch = texts[i : i + batch_size]
-        batch_embeddings = [model.get_text_embedding(text) for text in batch]
+        batch_embeddings = model.get_text_embedding_batch(batch)
         embeddings.extend(batch_embeddings)
     return embeddings
 
@@ -48,14 +49,10 @@ def embed_query(query: str) -> list[float]:
 
 def to_fp16(embeddings: list[list[float]]) -> list[list[float]]:
     """
-    Convert embeddings to FP16 precision for storage efficiency.
-    Pinecone stores these as FP16 internally when possible.
+    Pass through embeddings preserving float precision for vector similarity.
+    Maintained for backward compatibility.
     """
-    fp16_embeddings = []
-    for emb in embeddings:
-        arr = np.array(emb, dtype=np.float16)
-        fp16_embeddings.append(arr.astype(np.float32).tolist())  # Convert back for API
-    return fp16_embeddings
+    return embeddings
 
 
 def get_embedding_dimension() -> int:
