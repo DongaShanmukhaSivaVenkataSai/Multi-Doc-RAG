@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Loader2 } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 
-function ChatPanel({ messages, setMessages, apiBase }) {
+function ChatPanel({ messages, setMessages, apiBase, selectedDocs = [] }) {
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const messagesEndRef = useRef(null);
@@ -55,6 +55,7 @@ function ChatPanel({ messages, setMessages, apiBase }) {
                     question: userText,
                     chat_history: buildChatHistory(messages),
                     top_k: 5,
+                    doc_ids: selectedDocs.length > 0 ? selectedDocs : null,
                 }),
             });
 
@@ -137,6 +138,11 @@ function ChatPanel({ messages, setMessages, apiBase }) {
             </div>
 
             <div className="chat-input-container">
+                {selectedDocs.length > 0 && (
+                    <div style={{ padding: '0 8px 6px 8px', fontSize: '12px', color: '#818cf8', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span>🎯 Filtering query to {selectedDocs.length} selected document{selectedDocs.length > 1 ? 's' : ''}</span>
+                    </div>
+                )}
                 <div className="input-box glass-panel">
                     <textarea
                         ref={textareaRef}

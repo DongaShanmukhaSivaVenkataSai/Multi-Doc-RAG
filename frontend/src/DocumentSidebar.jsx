@@ -1,7 +1,15 @@
 import React, { useRef } from 'react';
-import { UploadCloud, FileText, Loader2, Database, Trash2 } from 'lucide-react';
+import { UploadCloud, FileText, Loader2, Database, Trash2, CheckSquare, Square } from 'lucide-react';
 
-function DocumentSidebar({ documents, onUpload, onDelete, isUploading }) {
+function DocumentSidebar({
+    documents,
+    selectedDocs = [],
+    onToggleSelectDoc,
+    onSelectAllDocs,
+    onUpload,
+    onDelete,
+    isUploading,
+}) {
     const fileInputRef = useRef(null);
 
     const handleFileChange = (e) => {
@@ -56,9 +64,27 @@ function DocumentSidebar({ documents, onUpload, onDelete, isUploading }) {
             </div>
 
             <div className="document-list-container">
-                <h3 className="section-title">
-                    Uploaded Files <span className="badge">{documents.length}</span>
-                </h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <h3 className="section-title" style={{ margin: 0 }}>
+                        Uploaded Files <span className="badge">{documents.length}</span>
+                    </h3>
+                    {documents.length > 0 && (
+                        <button
+                            onClick={onSelectAllDocs}
+                            style={{
+                                background: 'transparent',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                color: '#ccc',
+                                borderRadius: '4px',
+                                fontSize: '11px',
+                                padding: '2px 6px',
+                                cursor: 'pointer',
+                            }}
+                        >
+                            {selectedDocs.length === 0 ? 'All' : `${selectedDocs.length}/${documents.length}`}
+                        </button>
+                    )}
+                </div>
 
                 {documents.length === 0 ? (
                     <div className="empty-state">
@@ -67,22 +93,34 @@ function DocumentSidebar({ documents, onUpload, onDelete, isUploading }) {
                     </div>
                 ) : (
                     <ul className="document-list">
-                        {documents.map((doc, idx) => (
-                            <li key={idx} className="document-item">
-                                <FileText size={16} className="doc-icon" />
-                                <div className="doc-info">
-                                    <span className="doc-name" title={doc.doc_name}>{doc.doc_name}</span>
-                                    <span className="doc-meta">{doc.num_chunks} chunks &middot; {formatDate(doc.upload_time)}</span>
-                                </div>
-                                <button
-                                    className="doc-delete-btn"
-                                    title="Delete document"
-                                    onClick={() => onDelete(doc.doc_name)}
-                                >
-                                    <Trash2 size={14} />
-                                </button>
-                            </li>
-                        ))}
+                        {documents.map((doc, idx) => {
+                            const isSelected = selectedDocs.includes(doc.doc_name);
+                            return (
+                                <li key={idx} className={`document-item ${isSelected ? 'selected' : ''}`}>
+                                    <button
+                                        onClick={() => onToggleSelectDoc(doc.doc_name)}
+                                        style={{ background: 'transparent', border: 'none', color: isSelected ? '#6366f1' : '#888', cursor: 'pointer', padding: '0 4px', display: 'flex', alignItems: 'center' }}
+                                        title={isSelected ? "Selected for query filter" : "Click to filter queries to this document"}
+                                    >
+                                        {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+                                    </button>
+                                    <div className="doc-info" onClick={() => onToggleSelectDoc(doc.doc_name)} style={{ cursor: 'pointer' }}>
+                                        <span className="doc-name" title={doc.doc_name}>{doc.doc_name}</span>
+                                        <span className="doc-meta">{doc.num_chunks} chunks &middot; {formatDate(doc.upload_time)}</span>
+                                    </div>
+                                    <button
+                                        className="doc-delete-btn"
+                                        title="Delete document"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDelete(doc.doc_name);
+                                        }}
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </li>
+                            );
+                        })}
                     </ul>
                 )}
             </div>
