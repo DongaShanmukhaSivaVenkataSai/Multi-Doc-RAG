@@ -55,6 +55,15 @@ def build_context_prompt(chunks: list[dict]) -> str:
     return "\n\n---\n\n".join(context_parts)
 
 
+def get_model_candidates() -> list[str]:
+    """Candidate models to try in order of priority."""
+    candidates = [settings.llm_model]
+    for m in ["openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b", "llama-3.3-70b-versatile"]:
+        if m not in candidates:
+            candidates.append(m)
+    return candidates
+
+
 async def condense_query(
     question: str,
     chat_history: list[dict] | None = None,
@@ -86,19 +95,24 @@ Follow-up Question: {clean_q}
 
 Standalone Query:"""
 
-    try:
-        completion = await client.chat.completions.create(
-            model=settings.llm_model,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
-            max_tokens=100,
-        )
-        rewritten = completion.choices[0].message.content.strip()
-        logger.info(f"Query condensed: '{clean_q}' -> '{rewritten}'")
-        return rewritten if rewritten else clean_q
-    except Exception as e:
-        logger.warning(f"Could not condense query: {e}. Falling back to raw query.")
-        return clean_q
+    for model_name in get_model_candidates():
+        try:
+            completion = await client.chat.completions.create(
+                model=model_name,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.1,
+                max_tokens=100,
+            )
+            rewritten = completion.choices[0].message.content.strip()
+            logger.info(f"Query condensed ({model_name}): '{clean_q}' -> '{rewritten}'")
+            return rewritten if rewritten else clean_q
+        except Exception as e:
+            err_msg = str(e).lower()
+            if "model_not_found" in err_msg or "does not exist" in err_msg or "404" in err_msg:
+                continue
+            logger.warning(f"Could not condense query: {e}. Falling back to raw query.")
+            return clean_q
+    return clean_q
 
 
 async def generate_streaming_async(
@@ -109,6 +123,7 @@ async def generate_streaming_async(
     """
     Generate an asynchronous streaming response from Groq using retrieved context.
     Yields chunks of the response as they arrive without blocking the event loop.
+    Includes automatic fallback across available Groq model tiers.
     """
     client = get_async_groq_client()
 
@@ -133,24 +148,41 @@ Please provide a comprehensive answer based on the context above."""
 
     messages.append({"role": "user", "content": user_message})
 
-    logger.info(f"Sending to Groq ({settings.llm_model}): {len(messages)} messages")
+    stream = None
+    last_err = None
+    for model_name in get_model_candidates():
+        try:
+            logger.info(f"Streaming from Groq ({model_name})")
+            stream = await client.chat.completions.create(
+                model=model_name,
+                messages=messages,
+                temperature=0.1,
+                max_tokens=4096,
+                stream=True,
+            )
+            break
+        except Exception as e:
+            last_err = e
+            err_msg = str(e).lower()
+            if "model_not_found" in err_msg or "does not exist" in err_msg or "404" in err_msg:
+                logger.warning(f"Model '{model_name}' not available on Groq, trying next candidate...")
+                continue
+            logger.error(f"Groq API error on '{model_name}': {e}")
+            yield f"\n\n❌ Error generating response: {str(e)}"
+            return
+
+    if stream is None:
+        logger.error(f"All candidate Groq models failed. Last error: {last_err}")
+        yield f"\n\n❌ Error generating response: {str(last_err)}"
+        return
 
     try:
-        stream = await client.chat.completions.create(
-            model=settings.llm_model,
-            messages=messages,
-            temperature=0.1,
-            max_tokens=4096,
-            stream=True,
-        )
-
         async for chunk in stream:
-            if chunk.choices[0].delta.content:
+            if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
                 yield chunk.choices[0].delta.content
-
     except Exception as e:
-        logger.error(f"Groq API error: {e}")
-        yield f"\n\n❌ Error generating response: {str(e)}"
+        logger.error(f"Groq streaming error: {e}")
+        yield f"\n\n❌ Error streaming response: {str(e)}"
 
 
 def generate_streaming(
@@ -158,7 +190,7 @@ def generate_streaming(
     chunks: list[dict],
     chat_history: list[dict] | None = None,
 ) -> Generator[str, None, None]:
-    """Synchronous generator wrapper for backward compatibility and test scripts."""
+    """Synchronous generator wrapper with automatic model fallback."""
     client = get_groq_client()
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     if chat_history:
@@ -169,20 +201,34 @@ def generate_streaming(
     user_message = f"## Retrieved Context:\n\n{context}\n\n## Question:\n{question}\n\nPlease provide a comprehensive answer based on the context above."
     messages.append({"role": "user", "content": user_message})
 
-    try:
-        stream = client.chat.completions.create(
-            model=settings.llm_model,
-            messages=messages,
-            temperature=0.1,
-            max_tokens=4096,
-            stream=True,
-        )
-        for chunk in stream:
-            if chunk.choices[0].delta.content:
-                yield chunk.choices[0].delta.content
-    except Exception as e:
-        logger.error(f"Groq API error: {e}")
-        yield f"\n\n❌ Error generating response: {str(e)}"
+    stream = None
+    last_err = None
+    for model_name in get_model_candidates():
+        try:
+            stream = client.chat.completions.create(
+                model=model_name,
+                messages=messages,
+                temperature=0.1,
+                max_tokens=4096,
+                stream=True,
+            )
+            break
+        except Exception as e:
+            last_err = e
+            err_msg = str(e).lower()
+            if "model_not_found" in err_msg or "does not exist" in err_msg or "404" in err_msg:
+                continue
+            logger.error(f"Groq API error: {e}")
+            yield f"\n\n❌ Error generating response: {str(e)}"
+            return
+
+    if stream is None:
+        yield f"\n\n❌ Error generating response: {str(last_err)}"
+        return
+
+    for chunk in stream:
+        if chunk.choices and chunk.choices[0].delta and chunk.choices[0].delta.content:
+            yield chunk.choices[0].delta.content
 
 
 def generate_response(
