@@ -20,9 +20,11 @@ ENV/
 .env
 .env.*
 
-# Uploads / user data
+# Uploads / user data / databases
 backend/uploads/
-!backend/uploads/_docs_registry.json
+*.db
+*.sqlite
+*.sqlite3
 
 # Pytest / coverage
 .pytest_cache/
